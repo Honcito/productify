@@ -24,23 +24,22 @@ export const updateUser = async (id: string, data: Partial<NewUser>) => {
 };
 
 // upsert => create or update
-export const upsertUser = async(data: NewUser) => {
-    // This is what we have done first
-    // const existingUser = await getUserById(data.id);
-    // if (existingUser) return updateUser(data.id, data);
-    //     return createUser(data);
+export const upsertUser = async (userData: NewUser) => {
+  const [user] = await db
+    .insert(users)
+    .values(userData)
+    .onConflictDoUpdate({
+      target: users.id,
+      set: {
+        email: userData.email,
+        name: userData.name,
+        imageUrl: userData.imageUrl,
+        // No incluimos 'id' en el set para evitar actualizar la Clave Primaria
+      },
+    })
+    .returning();
 
-    // CodeRabbit suggestion
-    const [user] = await db
-        .insert(users)
-        .values(data)
-        .onConflictDoUpdate({
-            target: users.id,
-            set: data,
-        })
-        .returning();
-
-        return user;
+  return user;
 };
 
 // PRODUCTS QUERIES
@@ -73,12 +72,18 @@ export const getProductById = async(id: string) => {
 };
 
 export const updateProduct = async (id: string, data: Partial<NewProduct>) => {
-    const existingProduct = await getProductById(id);
-    if (!existingProduct) {
-        throw new Error(`Product with id ${id} not found`);
-    }
+  const existingProduct = await getProductById(id);
+  if (!existingProduct) {
+    throw new Error(`Product with id ${id} not found`);
+  }
 
-    const [product] = await db.update(products).set(data).where(eq(products.id, id)).returning();
+  const [product] = await db
+    .update(products)
+    .set(data)
+    .where(eq(products.id, id))
+    .returning();
+
+  return product; // 👈 SOLUCIÓN: Devuelve el producto actualizado
 };
 
 export const deleteProduct = async (id: string) => {
