@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { ENV } from './../config/env';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -5,8 +6,8 @@ import * as schema from './schema';
 
 
 
-if (!ENV.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not set in environment variables");
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is not set in environment variables");
 }
 
 // Initialize PostgreSQL connection Pool

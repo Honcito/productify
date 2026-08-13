@@ -1,8 +1,12 @@
+
 import express from 'express';
 import cors from 'cors';
 import { ENV } from './config/env';
 import { clerkMiddleware } from '@clerk/express'
 import { User } from './db/schema';
+import userRoutes from './routes/userRoutes';
+import commentRoutes from './routes/commentRoutes';
+import productRoutes from './routes/productRoutes';
 
 const app = express();
 
@@ -13,8 +17,6 @@ app.use(express.json()); // parses JSON request bodies.
 app.use(express.urlencoded({ extended: true })); // parses from data (like HTML forms).
 
 app.get('/', (req, res) => { 
-    
-
     res.json({
         message: "Welcome to Productify API - Powered by PostgreSQL, Drizzle ORM & Clerk Auth",
         endpoints: {
@@ -24,6 +26,10 @@ app.get('/', (req, res) => {
         },
     });
 });
+
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/comments', commentRoutes);
 
 app.listen(ENV.PORT, () => {
     console.log(`Server is up and running on PORT:`, ENV.PORT);
