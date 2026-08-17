@@ -50,7 +50,7 @@ export const deleteComment = async(req: Request, res: Response) => {
             error: "Unauthorized"
         });
 
-        const { commentId } = req.params as {commetnId: string};
+        const { commentId } = req.params as {commentId: string};
 
         // Check if comment exist and belongs to user
         const existingComment = await queries.getCommentById(commentId);
